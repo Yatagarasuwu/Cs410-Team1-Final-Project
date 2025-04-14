@@ -1,0 +1,21 @@
+# GradebookShell
+
+**GradebookShell** is a Java-based command-line application for managing class gradebooks. It supports instructors in creating classes, managing categories, assignments, and students, and recording grades, all backed by an SQLite database.
+
+---
+
+## 💾 Setup Instructions
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/GradebookShell.git
+cd GradebookShell
+```
+### 2. Compile the Program
+```bash
+javac -cp ".;sqlite-jdbc-3.49.1.0.jar" GradebookShell.java
+```
+### 3. Run the Program
+```bash
+java -cp ".;sqlite-jdbc-3.49.1.0.jar" GradebookShell gradebook.db
+```
