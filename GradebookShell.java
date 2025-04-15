@@ -1,6 +1,20 @@
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
+/*
+ *      This shell class uses the command-line to manage a gradebook.
+ * Users can create classes, add students, define categories, assign grades, and view gradebook data. 
+ * We are using SQL to manage the data. 
+ * @Date Spring 2025
+ * @Author Aarik Guy, Sabastian Leeper
+ */
 public class GradebookShell {
     private static final Scanner scanner = new Scanner(System.in);
     private static Connection conn;
@@ -41,6 +55,11 @@ public class GradebookShell {
         }
     }
 
+     /**
+     * Sets up tables if they don't exist.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
     private static void setupDatabase() throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute(
@@ -107,6 +126,12 @@ public class GradebookShell {
         );
     }
 
+    /**
+     * Creates a new class and inserts it into the database.
+     * 
+     * @param args A string containing courseNumber, term, section, and description.
+     * @throws SQLException if a database access error occurs.
+     */
     private static void newClass(String args) throws SQLException {
         String[] parts = parseArgs(args, 4);
         String id = parts[0] + "-" + parts[1] + "-" + parts[2];
@@ -120,6 +145,11 @@ public class GradebookShell {
         System.out.println("Class created: " + id);
     }
 
+    /**
+     * Lists all classes in the database along with their descriptions and student counts.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
     private static void listClasses() throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
@@ -132,11 +162,19 @@ public class GradebookShell {
         }
     }
 
+    /*
+     * Self explainatory -- Shows the current class.    
+     */
     private static void showClass() {
         System.out.println(currentClassID == null ? "No class selected." : "Current class: " + currentClassID);
     }
 
-    // Adds a category to the currently selected class
+     /**
+     * Adds a category to the currently selected class.
+     * 
+     * @param args A string containing the category name and weight.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void addCategory(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -156,7 +194,11 @@ private static void addCategory(String args) throws SQLException {
     System.out.println("Category added.");
 }
 
-// Displays all categories for the currently selected class
+  /**
+     * Displays all categories for the currently selected class.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
 private static void showCategories() throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -172,7 +214,12 @@ private static void showCategories() throws SQLException {
     }
 }
 
-// Adds an assignment to a category in the currently selected class
+  /**
+     * Adds an assignment to a category in the selected class.
+     * 
+     * @param args A string containing: assignment name, description, point value, and category name.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void addAssignment(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -209,7 +256,11 @@ private static void addAssignment(String args) throws SQLException {
     System.out.println("Assignment added.");
 }
 
-// Shows all assignments in the selected class
+ /**
+     * Shows all assignments in the selected class.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
 private static void showAssignments() throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -228,7 +279,12 @@ private static void showAssignments() throws SQLException {
     }
 }
 
-// Adds a student and enrolls them in the current class
+    /**
+     * Adds a student and enrolls them in the current class.
+     * 
+     * @param args A string containing: assignment name, description, point value, and category name.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void addStudent(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -257,6 +313,12 @@ private static void addStudent(String args) throws SQLException {
     System.out.println("Student added and enrolled.");
 }
 
+    /**
+     * Selects a class to work with based on its ID.
+     * 
+     * @param args The class ID it needs to select.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void selectClass(String args) throws SQLException {
     String classID = args.trim();
     
@@ -272,7 +334,12 @@ private static void selectClass(String args) throws SQLException {
 }
 
 
-// Shows all students enrolled in the current class
+ /**
+     * Shows all students enrolled in the current class.
+     * 
+     * @param args Unused parameter.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void showStudents(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -293,7 +360,12 @@ private static void showStudents(String args) throws SQLException {
     }
 }
 
-// Assigns a grade for a student on a specific assignment
+  /**
+     * Assigns a grade for a student on a specific assignment.
+     * 
+     * @param args A string containing: assignment name, description, point value, and category name.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void gradeAssignment(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -328,7 +400,12 @@ private static void gradeAssignment(String args) throws SQLException {
     System.out.println("Grade recorded.");
 }
 
-// Shows all grades for a student
+/**
+     * Shows all grades for a student  
+     * 
+     * @param args The student ID.
+     * @throws SQLException if a database access error occurs.
+     */
 private static void studentGrades(String args) throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -352,7 +429,11 @@ private static void studentGrades(String args) throws SQLException {
     }
 }
 
-// Displays a gradebook-style overview of all students and their grades
+/**
+     * Displays a gradebook-style overview of all students and their grades.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
 private static void showGradebook() throws SQLException {
     if (currentClassID == null) {
         System.out.println("No class selected.");
@@ -398,6 +479,16 @@ private static void showGradebook() throws SQLException {
     }
 }
 
+
+/**
+     * Parses a string of arguments into an array of tokens.
+     * 
+     * @param input The input string to parse.
+     * @param expected The expected number of arguments.
+     * @return An array of parsed arguments.
+     * @throws IllegalArgumentException if the number of arguments does not match the expected count.
+     */
+    
 private static String[] parseArgs(String input, int expected) {
     List<String> tokens = new ArrayList<>();
     Scanner scanner = new Scanner(input);
